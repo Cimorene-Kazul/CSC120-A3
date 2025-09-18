@@ -26,5 +26,8 @@ public class Test {
         // figuring out lists of lists
         String[][] testlist2 = {{"1", "2"}};
         System.out.println(testlist2[0][1]);
+        
+        // list lengths - upon googling, I uncovered that the attribute .length is  the length of a String[] object.
+        System.out.println(testlist.length);
     }
 }
