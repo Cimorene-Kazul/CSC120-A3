@@ -1,0 +1,18 @@
+CHAT
+Query number of rounds of conversation. Save as rounds_remaining.
+Make a variable transcript to save transcript in.
+Say hello. Use a random greeting ("Hey!", "Hi!", "Hello!") paired with a random convo starter ("What's up?", "What's on your mind?", "Whatcha thinking about?")
+Add the greeting and then enter ("\n") to the transcript. do this after any text.
+If rounds_remaining is not 0:
+    Query the user for a response.
+    If the response contains mirror words:
+        replace the mirror words with their opposites. replace periods with question marks.
+        If there is a question mark, make a response implying the bot cannot answer questions.
+    If the response does not contain mirror words:
+        If rounds_remaining is not 1:
+            make a general random canned response
+        If rounds_remaining is 1:
+            make a random canned response that does not invite more conversation
+Make a conversation exit comment ("That's very interesting, but I got to go now.")
+Say goodbye.
+
