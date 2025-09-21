@@ -1,3 +1,4 @@
+import java.util.Scanner;
 
 class Conversation implements Chatbot {
 
@@ -5,8 +6,9 @@ class Conversation implements Chatbot {
   int rounds; // number of rounds of converstaion remaining
   String[] greetings = {"Hi!", "Hello!", "Hey!"}; // list of greetings
   String[] starters = {"What's up?", "What is on your mind?", "Whatcha thinking about?"}; // list of starters for conversation
+  String[] punctuation = {".",",", ";", "!", "?"}; // list of punctuation to watch for at the end of words
   // list of mirror words. first word in each list is a the word with the second being its mirror. Replace top words first.
-  String[][] replacements = {
+  String[][] replacementsBase = {
     {"i", "you"},
     {"me", "you"},
     {"am", "are"},
@@ -20,8 +22,8 @@ class Conversation implements Chatbot {
     {"myself", "yourself"},
     {"yourself", "myself"}
   };
-  // list of mirror words. make a generator for them, maybe, but for now do by hand
-  String[] mirrorWords = {"i", "me", "am", "you", "my", "your", "yours", "mine", "i'm", "you're", "yourself", "myself"};
+  String[][] replacements = new String[replacementsBase.length * punctuation.length][2];
+  String[] mirrorWords = new String[replacementsBase.length * punctuation.length];
 
   //  canned responses that draw a response
   String[] cannedContinues = {
@@ -45,6 +47,25 @@ class Conversation implements Chatbot {
    * Constructor 
    */
   Conversation() {
+    Scanner input = new Scanner(System.in);
+
+    for (int i = 0; i < this.replacementsBase.length; i++){
+      for (int j = 0; j < this.punctuation.length; j++){
+        this.replacements[i*this.punctuation.length + j][0] = this.replacementsBase[i][0] + this.punctuation[j];
+        this.replacements[i*this.punctuation.length + j][1] = this.replacementsBase[i][1] + this.punctuation[j];
+      }
+    }
+
+    for (int i = 0; i < this.replacements.length; i++){
+      this.mirrorWords[i] = this.replacements[i][0];
+    }
+    
+    System.out.println("How many rounds would you like to talk? ");
+    this.rounds = input.nextInt();
+    System.out.println("\n");
+    this.chat();
+    System.out.println("\n");
+    this.printTranscript();
   }
   
   /**
@@ -68,7 +89,16 @@ class Conversation implements Chatbot {
    * Starts and runs the conversation with the user
    */
   public void chat() {
-    
+    Scanner input = new Scanner(System.in);
+    this.pick(this.greetings);
+    this.pick(this.starters);
+    while (this.rounds > 0){
+      this.rounds -= 1;
+      String userStatement = input.nextLine();
+      this.say(this.respond(userStatement));
+    }
+    this.pick(this.exits);
+    this.pick(this.goodbyes);
   }
 
   /**
@@ -96,6 +126,7 @@ class Conversation implements Chatbot {
       };
     };
     if (mirror){
+      inputString = inputString.replace("?", "\\?");
       //if mirror, make a mirrored response
       inputString = inputString.toLowerCase();
       outputWords = inputString.split(" ");
@@ -113,34 +144,40 @@ class Conversation implements Chatbot {
       // capitalizes first sentence and all sentences after .
       sentences = intermediateString.split(".");
       for (int i = 0; i<sentences.length; i++){
+        if (sentences[i].length() >= 1){
         sentences[i].replaceFirst(sentences[i].substring(0,1), sentences[i].substring(0,1).toUpperCase());
+        }
       }
       // turns statements into questions
-      intermediateString = "".join("?", sentences);
+      intermediateString = "".join("\\?", sentences);
       // capitalizes all sentences after !
       sentences = intermediateString.split("!");
       for (int i = 0; i<sentences.length; i++){
+        if (sentences[i].length() >= 1){
         sentences[i].replaceFirst(sentences[i].substring(0,1), sentences[i].substring(0,1).toUpperCase());
+        }
       }
       intermediateString = "".join("!", sentences);
       // capitalizes all sentences after ?
-      sentences = intermediateString.split("?");
+      sentences = intermediateString.split("\\?");
       for (int i = 0; i<sentences.length; i++){
-        sentences[i].replaceFirst(sentences[i].substring(0,1), sentences[i].substring(0,1).toUpperCase());
+        if (sentences[i].length() >= 1){
+          sentences[i].replaceFirst(sentences[i].substring(0,1), sentences[i].substring(0,1).toUpperCase());
+        }
       }
       // turns questions into statements
       intermediateString = "".join(".", sentences);
-      returnString = intermediateString;
+      returnString = intermediateString.replace("\\?", "?");
     } else {
       //otherwise, make a canned response
-      if (rounds>0){
+      if (this.rounds>0){
         //if there are still lines left, try and draw out more thoughts
-        int index = (int)(Math.random()*cannedContinues.length);
-        returnString = cannedContinues[index];
+        int index = (int)(Math.random()*this.cannedContinues.length);
+        returnString = this.cannedContinues[index];
       } else {
         //otherwise, end noncommitally
-        int index = (int)(Math.random()*cannedEnds.length);
-        returnString = cannedEnds[index];
+        int index = (int)(Math.random()*this.cannedEnds.length);
+        returnString = this.cannedEnds[index];
       }
     };
     return returnString; 

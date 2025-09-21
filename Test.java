@@ -41,5 +41,7 @@ public class Test {
 
         String[] sentences = {"12", "45"};
         System.out.println("".join(".", sentences));
+
+        System.out.println("12hh33".length());
     }
 }
