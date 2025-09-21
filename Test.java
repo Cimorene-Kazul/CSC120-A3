@@ -22,12 +22,24 @@ public class Test {
 
         //how do I work with lists test
         String[] testlist = {"1", "2", "3"}; // Discovered lists use curly braces?
+        testlist[1] = "new";
         System.out.println(testlist[1]); // but you index the Python way
         // figuring out lists of lists
         String[][] testlist2 = {{"1", "2"}};
         System.out.println(testlist2[0][1]);
-        
+
+        for (String x: testlist){
+            System.out.println(x);
+        }
+    
         // list lengths - upon googling, I uncovered that the attribute .length is  the length of a String[] object.
         System.out.println(testlist.length);
+
+        //testing string methods
+        String testString = "hi, how are you?";
+        System.out.println(testString.replaceFirst(testString.substring(0,1), testString.substring(0,1).toUpperCase()));
+
+        String[] sentences = {"12", "45"};
+        System.out.println("".join(".", sentences));
     }
 }
