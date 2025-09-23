@@ -194,4 +194,8 @@ class Conversation implements Chatbot {
     };
     return returnString; 
   }
+
+  public static void main(String[] args) {
+    Conversation myConversation = new Conversation();
+  }
 }
