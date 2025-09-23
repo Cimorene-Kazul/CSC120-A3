@@ -1,4 +1,6 @@
 import java.util.Scanner;
+import java.util.Dictionary;
+import java.util.Hashtable;
 
 class Conversation implements Chatbot {
 
@@ -6,12 +8,13 @@ class Conversation implements Chatbot {
   int rounds; // number of rounds of converstaion remaining
   String[] greetings = {"Hi!", "Hello!", "Hey!"}; // list of greetings
   String[] starters = {"What's up?", "What is on your mind?", "Whatcha thinking about?"}; // list of starters for conversation
-  String[] punctuation = {"", "\\.",",", ";", "\\!", "\\?"}; // list of punctuation to watch for at the end of words
+  String[] punctuation = {"", ".",",", ";", "!", "?"}; // list of punctuation to watch for at the end of words
   // list of mirror words. first word in each list is a the word with the second being its mirror. Replace top words first.
   String[][] replacementsBase = {
     {"i", "you"},
     {"me", "you"},
     {"am", "are"},
+    {"are", "am"},
     {"you", "I"},
     {"my", "your"},
     {"your", "my"},
@@ -22,7 +25,7 @@ class Conversation implements Chatbot {
     {"myself", "yourself"},
     {"yourself", "myself"}
   };
-  String[][] replacements = new String[replacementsBase.length * punctuation.length][2];
+  Dictionary<String, String> replacements = new Hashtable<>();
   String[] mirrorWords = new String[replacementsBase.length * punctuation.length];
 
   //  canned responses that draw a response
@@ -51,22 +54,18 @@ class Conversation implements Chatbot {
 
     for (int i = 0; i < this.replacementsBase.length; i++){
       for (int j = 0; j < this.punctuation.length; j++){
-        this.replacements[i*this.punctuation.length + j][0] = " " + this.replacementsBase[i][0] + this.punctuation[j] + " ";
-        this.replacements[i*this.punctuation.length + j][1] = " " + this.replacementsBase[i][1] + this.punctuation[j] + " ";
+        this.replacements.put(this.replacementsBase[i][0] + this.punctuation[j] , this.replacementsBase[i][1] + this.punctuation[j]);
+        this.mirrorWords[i*this.punctuation.length + j] = this.replacementsBase[i][0] + this.punctuation[j];
       }
-    }
-
-    for (int i = 0; i < this.replacements.length; i++){
-      this.mirrorWords[i] = this.replacements[i][0];
     }
     
     System.out.println("How many rounds would you like to talk? ");
     this.rounds = input.nextInt();
-    input.close();
-    System.out.println("\n");
-    this.chat();
-    System.out.println("\n");
-    this.printTranscript();
+    //input.close();
+    //System.out.println("\n");
+    //this.chat();
+    //System.out.println("\n");
+    //this.printTranscript();
   }
   
   /**
@@ -110,14 +109,58 @@ class Conversation implements Chatbot {
   public void printTranscript() {
     System.out.println(this.transcript);
   }
+  
+  /**
+   * Capitalizes the first letter of the input
+   * @param inputString 
+   * @return inputString with the first letter capitalized
+   */
+  public String capitalizeFirstLetter(String inputString){
+    if (inputString.substring(0,1)=="." || inputString.substring(0,1)=="!" || inputString.substring(0,1)=="?"){
+      return inputString;
+    } else {
+    return inputString.replaceFirst(inputString.substring(0,1), inputString.substring(0,1).toUpperCase());
+    }
+  }
 
   /**
    * Gives a mirrored version of the input parameter.
-   * @param inputString string to mirror
+   * @param inputString string to mirror, all in lowercase
    * @return mirrored version of inputString
    */
   public String mirror(String inputString){
-    return "Mirrored Response";
+    String mirroredString;
+    String [] sentences;
+    // replace words with their mirrors
+    String[] inputWords = inputString.split(" ");
+    for (int i=0; i<inputWords.length; i++){
+      if (this.replacements.get(inputWords[i])== null){
+        inputWords[i] = inputWords[i];
+      } else {
+        inputWords[i] = replacements.get(inputWords[i]);
+      }
+    }
+    mirroredString = "".join(" ", inputWords) + "  ";
+    // capitalize sentences
+    // first sentence and anything after a "."
+    sentences = mirroredString.split("\\. ");
+    for (int i = 0; i<sentences.length; i++){
+      sentences[i] = this.capitalizeFirstLetter(sentences[i]);
+    }
+    mirroredString = "".join(". ", sentences);
+    // anything after a "!"
+    sentences = mirroredString.split("! ");
+    for (int i = 0; i<sentences.length; i++){
+      sentences[i] = this.capitalizeFirstLetter(sentences[i]);
+    }
+    mirroredString = "".join("! ", sentences);
+    // anything after a "?"
+    sentences = mirroredString.split("\\? ");
+    for (int i = 0; i<sentences.length; i++){
+      sentences[i] = this.capitalizeFirstLetter(sentences[i]);
+    }
+    mirroredString = "".join("? ", sentences);
+    return mirroredString;
   }
 
   /**
@@ -154,5 +197,6 @@ class Conversation implements Chatbot {
 
   public static void main(String[] arguments) {
     Conversation myConversation = new Conversation();
+    System.out.println(myConversation.mirror("hi, how are you? i am doing well."));
   }
 }

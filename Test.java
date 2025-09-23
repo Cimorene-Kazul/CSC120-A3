@@ -1,3 +1,5 @@
+import java.util.Dictionary;
+import java.util.Hashtable;
 // this is a file to let me test random numbers and other things that I might need.
 // I am leaving this here so that you can see my thought processes.
 public class Test {
@@ -63,5 +65,8 @@ public class Test {
         test2 = "".join("\\?", sentences2);
         System.out.println(test2);
 
+        Dictionary<String,String> d = new Hashtable<>();
+        d.put("0", "1");
+        System.out.println(d.get("1"));
     }
 }
