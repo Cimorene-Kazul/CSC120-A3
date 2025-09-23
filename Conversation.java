@@ -61,11 +61,11 @@ class Conversation implements Chatbot {
     
     System.out.println("How many rounds would you like to talk? ");
     this.rounds = input.nextInt();
-    //input.close();
-    //System.out.println("\n");
-    //this.chat();
-    //System.out.println("\n");
-    //this.printTranscript();
+    input.close();
+    System.out.println("\n");
+    this.chat();
+    System.out.println("\n");
+    this.printTranscript();
   }
   
   /**
@@ -193,10 +193,5 @@ class Conversation implements Chatbot {
       };
     };
     return returnString; 
-  }
-
-  public static void main(String[] arguments) {
-    Conversation myConversation = new Conversation();
-    System.out.println(myConversation.mirror("hi, how are you? i am doing well."));
   }
 }
