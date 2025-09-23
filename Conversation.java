@@ -62,6 +62,7 @@ class Conversation implements Chatbot {
     
     System.out.println("How many rounds would you like to talk? ");
     this.rounds = input.nextInt();
+    input.close();
     System.out.println("\n");
     this.chat();
     System.out.println("\n");
@@ -100,6 +101,7 @@ class Conversation implements Chatbot {
     };
     this.pick(this.exits);
     this.pick(this.goodbyes);
+    input.close();
   }
 
   /**
@@ -110,56 +112,31 @@ class Conversation implements Chatbot {
   }
 
   /**
+   * Gives a mirrored version of the input parameter.
+   * @param inputString string to mirror
+   * @return mirrored version of inputString
+   */
+  public String mirror(String inputString){
+    return "Mirrored Response";
+  }
+
+  /**
    * Gives appropriate response (mirrored or canned) to user input
    * @param inputString the users last line of input
    * @return mirrored or canned response to user input  
    */
   public String respond(String inputString) {
     boolean mirror = false;
-    String intermediateString;
-    String[] sentences;
     String returnString;
     // figure out to use canned or mirrored response
-    inputString = " "+ inputString.toLowerCase();
+    inputString = inputString.toLowerCase();
     for (String word: this.mirrorWords){
-      if (inputString.contains(word)){
+      if ((" "+inputString).contains(word)){
         mirror = true;
       };
     };
     if (mirror){
-      inputString.replace("?", "\\?");
-      //if mirror, make a mirrored response
-      intermediateString = inputString;
-      for (String[] pair: this.replacements){
-        intermediateString = intermediateString.replaceAll(pair[0], pair[1]);
-      };
-      // capitalizes first sentence and all sentences after .
-      sentences = intermediateString.split("\\.");
-      for (int i = 0; i<sentences.length; i++){
-        if (sentences[i].length() >= 1){
-        sentences[i].replaceFirst(sentences[i].substring(0,1), sentences[i].substring(0,1).toUpperCase());
-        };
-      };
-      // turns statements into questions
-      intermediateString = "".join("\\?", sentences);
-      // capitalizes all sentences after !
-      sentences = intermediateString.split("\\!");
-      for (int i = 0; i<sentences.length; i++){
-        if (sentences[i].length() >= 1){
-        sentences[i].replaceFirst(sentences[i].substring(0,1), sentences[i].substring(0,1).toUpperCase());
-        };
-      };
-      intermediateString = "".join("\\!", sentences);
-      // capitalizes all sentences after ?
-      sentences = intermediateString.split("\\?");
-      for (int i = 0; i<sentences.length; i++){
-        if (sentences[i].length() >= 1){
-          sentences[i].replaceFirst(sentences[i].substring(0,1), sentences[i].substring(0,1).toUpperCase());
-        };
-      };
-      // turns questions into statements
-      intermediateString = "".join("\\.", sentences);
-      returnString = intermediateString;
+      returnString = this.mirror(inputString);
     } else {
       //otherwise, make a canned response
       if (this.rounds>0){
