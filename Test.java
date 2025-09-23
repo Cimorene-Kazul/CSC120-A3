@@ -43,5 +43,25 @@ public class Test {
         System.out.println("".join(".", sentences));
 
         System.out.println("12hh33".length());
+
+        String test = "Luna, She is my friend! What about you?";
+        test.replace("?", "\\?");
+        test = test.toLowerCase();
+        String[] testWords = test.split(" ");
+        String test2 = "".join(" ", testWords);
+        System.err.println(test2);
+        String[] sentences2 = test2.split("\\.");
+        for (String sentence:sentences2){
+            System.err.println(sentence);
+        }
+      for (int i = 0; i<sentences2.length; i++){
+        System.out.println(sentences2[i]);
+        if (sentences2[i].length() >= 1){
+            sentences2[i].replaceFirst(sentences2[i].substring(0,1), sentences2[i].substring(0,1).toUpperCase());
+        };
+      };
+        test2 = "".join("\\?", sentences2);
+        System.out.println(test2);
+
     }
 }
