@@ -2,6 +2,9 @@ import java.util.Scanner;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
+/**
+ * Conversation is a semi-deterministic Chatbot - it will mirror statements when ran, and give a random canned response otherwise. When you make a conversation, it will chat with you on creation.
+ */
 class Conversation implements Chatbot {
 
   // Attributes 
@@ -43,7 +46,8 @@ class Conversation implements Chatbot {
   "I'm afraid we are out of time to talk, but this was a fun conversation."
   }; 
   String[] goodbyes = {"Bye!", "Goodbye!", "See you later!", "Seeya later!"}; // goodbyes
-  String transcript = "TRANSCRIPT:"; // save transcript here. starting line is TRANSCRIPT:
+  String[] transcript; // save transcript here. 
+  int transcriptSize = 0;
 
   /**
    * Constructor for a chatbot
@@ -65,6 +69,10 @@ class Conversation implements Chatbot {
     System.out.println("How many rounds would you like to talk? ");
     this.rounds = input.nextInt();
     System.out.println("\n");
+
+    // make an empty array for the transcript of the appropriate size
+    this.transcript = new String[Math.abs(this.rounds)*2+4];
+
     // have a conversation
     this.chat();
     System.out.println("\n");
@@ -80,7 +88,8 @@ class Conversation implements Chatbot {
    */
   public void say(String thing){
     System.out.println(thing); // print the thing to say
-    this.transcript+="\n"+thing; // add the thing to say to the transcript on a new line
+    this.transcript[this.transcriptSize] = thing; // add the thing to say to the transcript on a new line
+    this.transcriptSize +=1; // add one to the number of things in the transcript
   }  
   /**
   * Picks and says a random statement in a list of statements
@@ -102,9 +111,10 @@ class Conversation implements Chatbot {
     // do rounds many rounds of converation
     while (this.rounds > 0){
       this.rounds -= 1;
-      String userStatement = input.nextLine();
-      this.transcript += "\n" + userStatement;
-      this.say(this.respond(userStatement));
+      String userStatement = input.nextLine(); // get user input
+      this.transcript[transcriptSize] = userStatement; // add user input to transcript
+      this.transcriptSize += 1; // add 1 to transcript next index/number of things in transcript tracker
+      this.say(this.respond(userStatement)); // respond
     };
     // leave the conversation
     this.pick(this.exits);
@@ -116,7 +126,9 @@ class Conversation implements Chatbot {
    * Prints transcript of conversation
    */
   public void printTranscript() {
-    System.out.println(this.transcript);
+    System.out.println("TRANSCRIPT:");
+    for (int i=0; i<this.transcriptSize; i++)
+    System.out.println(this.transcript[i]);
   }
   
   /**
@@ -140,6 +152,8 @@ class Conversation implements Chatbot {
   public String mirror(String inputString){
     String mirroredString;
     String [] sentences;
+    String [] sentences2;
+    String [] sentences3;
     // replace words with their mirrors
     String[] inputWords = inputString.split(" ");
     for (int i=0; i<inputWords.length; i++){
@@ -155,22 +169,22 @@ class Conversation implements Chatbot {
     sentences = mirroredString.split("\\. ");
     for (int i = 0; i<sentences.length; i++){
       sentences[i] = this.capitalizeFirstLetter(sentences[i]);
+      // capitalize the letter after a !
+      sentences2 = sentences[i].split("! ");
+      for (int j = 0; j<sentences2.length; j++){
+        sentences2[j] = this.capitalizeFirstLetter(sentences2[j]);
+        // capitalize the letter after a ?
+        sentences3 = sentences2[j].split("\\? ");
+        for (int k = 0; k<sentences3.length; k++){
+          sentences3[k] = this.capitalizeFirstLetter(sentences3[k]);
+        }
+        // turn questions into comments
+        sentences2[j] = "".join(". ", sentences3);
+      }
+      sentences[i] = "".join("! ", sentences2);
     }
-    // turn comments into questions
+    // turn statements into questions
     mirroredString = "".join("? ", sentences);
-    // anything after a "!"
-    sentences = mirroredString.split("! ");
-    for (int i = 0; i<sentences.length; i++){
-      sentences[i] = this.capitalizeFirstLetter(sentences[i]);
-    }
-    mirroredString = "".join("! ", sentences);
-    // anything after a "?"
-    sentences = mirroredString.split("\\? ");
-    for (int i = 0; i<sentences.length; i++){
-      sentences[i] = this.capitalizeFirstLetter(sentences[i]);
-    }
-    // turn questions into comments
-    mirroredString = "".join(". ", sentences);
     return mirroredString;
   }
 
@@ -186,7 +200,7 @@ class Conversation implements Chatbot {
     inputString = inputString.toLowerCase(); // make input lowercase to ease checking
     // if it has a mirror word, make mirror true
     for (String word: this.mirrorWords){
-      if ((" "+inputString).contains(word)){ 
+      if ((" "+inputString).contains(" "+ word+" ")){ 
         mirror = true;
       };
     };
@@ -208,6 +222,6 @@ class Conversation implements Chatbot {
   }
 
   public static void main(String[] args) {
-    Conversation myConversation = new Conversation(); // make a new conversation, which will chat on creation
+    Conversation myConversation = new Conversation(); // make a new conversation and chat
   }
 }
