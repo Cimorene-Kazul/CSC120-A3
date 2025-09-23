@@ -61,11 +61,11 @@ class Conversation implements Chatbot {
     
     System.out.println("How many rounds would you like to talk? ");
     this.rounds = input.nextInt();
-    input.close();
     System.out.println("\n");
     this.chat();
     System.out.println("\n");
     this.printTranscript();
+    input.close();
   }
   
   /**
@@ -147,7 +147,8 @@ class Conversation implements Chatbot {
     for (int i = 0; i<sentences.length; i++){
       sentences[i] = this.capitalizeFirstLetter(sentences[i]);
     }
-    mirroredString = "".join(". ", sentences);
+    // turn comments into questions
+    mirroredString = "".join("? ", sentences);
     // anything after a "!"
     sentences = mirroredString.split("! ");
     for (int i = 0; i<sentences.length; i++){
@@ -159,7 +160,8 @@ class Conversation implements Chatbot {
     for (int i = 0; i<sentences.length; i++){
       sentences[i] = this.capitalizeFirstLetter(sentences[i]);
     }
-    mirroredString = "".join("? ", sentences);
+    // turn questions into comments
+    mirroredString = "".join(". ", sentences);
     return mirroredString;
   }
 
